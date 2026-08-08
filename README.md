@@ -1,19 +1,22 @@
 # Metadata JSON Viewer
 
-A lightweight static viewer for JSON files that contain a top-level `metadata` object with pass/fail text fields.
+A lightweight static web app for reviewing JSON files that contain a top-level `metadata` object with pass/fail text fields.
 
-This is now a single-file app, so you can open [index.html](/Users/fredwork/Documents/ChatGPT/terminal_bench/index.html) directly in a browser without needing a local server.
+The viewer is designed for quick inspection of structured evaluation output. It focuses on a known set of metadata fields, highlights failures first, and keeps the interface simple enough to run anywhere as a static site.
 
-## What It Does
+## Features
 
+- Reads a top-level `metadata` object from pasted JSON or an uploaded file.
 - Ignores unrelated top-level fields.
-- Reads the targeted metadata keys only.
-- Highlights `PASS:` checks in green and `FAIL:` checks in red.
-- Preserves line breaks from JSON strings such as `\n`.
-- Lets you click each field to expand or collapse its details.
-- Hides pass entries by default so failures are easier to review.
+- Highlights `PASS:` entries in green and `FAIL:` entries in red.
+- Preserves line breaks inside metadata values.
+- Expands and collapses individual fields for easier review.
+- Hides pass entries by default so non-pass items are easier to scan.
+- Runs entirely in the browser with no backend required.
 
-## Expected JSON Shape
+## Expected Input
+
+The app expects a JSON object with a top-level `metadata` key:
 
 ```json
 {
@@ -24,6 +27,8 @@ This is now a single-file app, so you can open [index.html](/Users/fredwork/Docu
   }
 }
 ```
+
+If a tracked field is missing, the viewer marks it as missing instead of failing silently.
 
 ## Tracked Fields
 
@@ -48,35 +53,27 @@ This is now a single-file app, so you can open [index.html](/Users/fredwork/Docu
 - `env_hygiene`
 - `housekeeping`
 
-## Local Usage
+## Running Locally
 
-Because this is a plain static site, you can open `index.html` directly in a browser.
+This project has no build step and no runtime dependencies.
 
-If you prefer to serve it locally instead:
+Open `index.html` directly in a browser, or serve the folder locally:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then visit `http://localhost:8000`.
+Then visit [http://localhost:8000](http://localhost:8000).
 
-## Easy Deployment From GitHub
 
-This repo is intentionally build-free, so it deploys easily on:
+## Project Structure
 
-- GitHub Pages
-- Vercel
-- Netlify
+- `index.html`: app markup and template structure
+- `styles.css`: visual styling
+- `app.js`: JSON parsing, field extraction, filtering, and rendering logic
 
-### GitHub Pages
+## Use Cases
 
-1. Push the repo to GitHub.
-2. Open `Settings` > `Pages`.
-3. Set `Source` to `Deploy from a branch`.
-4. Choose your default branch and `/ (root)`.
-
-### Vercel or Netlify
-
-1. Import the GitHub repo.
-2. Keep the default static-site settings.
-3. Deploy without a build command.
+- Reviewing metadata-based evaluation output
+- Sharing a lightweight QA or rubric inspection tool
+- Hosting a simple browser-based viewer without backend infrastructure
