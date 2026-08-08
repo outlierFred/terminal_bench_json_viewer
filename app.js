@@ -21,40 +21,9 @@ const TARGET_FIELDS = [
   "housekeeping",
 ];
 
-const SAMPLE_JSON = {
-  run_id: "example-123",
-  irrelevant_top_level_field: true,
-  metadata: {
-    anti_cheating_1:
-      "FAIL: Missing explicit anti-cheating controls.\nEvidence: No mention of sandbox or restricted execution.",
-    artifact_boundary_integrity_2: "PASS: Boundaries are clearly defined.",
-    difficulty_calibration_3:
-      "FAIL: Task difficulty appears overstated.\nConsider reducing required setup steps.",
-    hidden_requirement_gap_6: "PASS: No hidden requirements detected.",
-    metadata_accuracy_9: "PASS: Metadata fields are internally consistent.",
-    oracle_correctness_11:
-      "FAIL: Oracle appears incomplete.\nExpected failure behavior has not been validated yet.",
-    outcome_only_scoring_13: "PASS: Outcome scoring is balanced.",
-    reproducibility_14: "PASS: Steps are reproducible.",
-    resource_config_15: "PASS: Resource configuration looks good.",
-    reviewability_16: "PASS: Reviewability is acceptable.",
-    task_security_17: "FAIL: Sensitive file access policy is underspecified.",
-    test_instruction_alignment_18: "PASS: Instructions align with tests.",
-    test_resilience_19: "PASS: Tests are resilient.",
-    trajectory_reward_hacking_20: "PASS: No reward hacking signals found.",
-    vacuous_pass_21: "PASS: Pass criteria are meaningful.",
-    verifier_calibration_22: "PASS: Verifier is calibrated.",
-    instruction_style: "PASS: Writing style is clear.",
-    doc_drift: "FAIL: Documentation no longer matches the latest workflow.",
-    env_hygiene: "PASS: Environment setup is clean.",
-    housekeeping: "PASS: Cleanup rules are present.",
-  },
-};
-
 const jsonInput = document.getElementById("json-input");
 const renderButton = document.getElementById("render-json");
 const fileInput = document.getElementById("json-file");
-const loadSampleButton = document.getElementById("load-sample");
 const hidePassToggle = document.getElementById("hide-pass-toggle");
 const resultsContainer = document.getElementById("results");
 const summaryContainer = document.getElementById("summary");
@@ -219,11 +188,6 @@ hidePassToggle.addEventListener("change", () => {
   if (jsonInput.value.trim()) {
     parseAndRender(jsonInput.value);
   }
-});
-
-loadSampleButton.addEventListener("click", () => {
-  jsonInput.value = JSON.stringify(SAMPLE_JSON, null, 2);
-  parseAndRender(jsonInput.value);
 });
 
 fileInput.addEventListener("change", async (event) => {

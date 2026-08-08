@@ -283,6 +283,16 @@
         font: 0.95rem/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
       }
 
+      .dispute-highlight {
+        display: inline-block;
+        padding: 0.08rem 0.38rem;
+        border-radius: 0.4rem;
+        background: rgba(109, 180, 255, 0.2);
+        color: #9fd0ff;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
       .empty-state {
         padding: 28px;
         border-radius: 20px;
@@ -327,7 +337,6 @@
         <div class="input-actions">
           <label class="upload-button" for="json-file">Upload JSON File</label>
           <input id="json-file" type="file" accept=".json,application/json" />
-          <button id="load-sample" type="button" class="ghost-button">Load Sample</button>
           <button id="render-json" type="button">Render JSON</button>
         </div>
 
@@ -393,40 +402,9 @@
         "housekeeping",
       ];
 
-      const SAMPLE_JSON = {
-        run_id: "example-123",
-        irrelevant_top_level_field: true,
-        metadata: {
-          anti_cheating_1:
-            "FAIL: Missing explicit anti-cheating controls.\nEvidence: No mention of sandbox or restricted execution.",
-          artifact_boundary_integrity_2: "PASS: Boundaries are clearly defined.",
-          difficulty_calibration_3:
-            "FAIL: Task difficulty appears overstated.\nConsider reducing required setup steps.",
-          hidden_requirement_gap_6: "PASS: No hidden requirements detected.",
-          metadata_accuracy_9: "PASS: Metadata fields are internally consistent.",
-          oracle_correctness_11:
-            "FAIL: Oracle appears incomplete.\nExpected failure behavior has not been validated yet.",
-          outcome_only_scoring_13: "PASS: Outcome scoring is balanced.",
-          reproducibility_14: "PASS: Steps are reproducible.",
-          resource_config_15: "PASS: Resource configuration looks good.",
-          reviewability_16: "PASS: Reviewability is acceptable.",
-          task_security_17: "FAIL: Sensitive file access policy is underspecified.",
-          test_instruction_alignment_18: "PASS: Instructions align with tests.",
-          test_resilience_19: "PASS: Tests are resilient.",
-          trajectory_reward_hacking_20: "PASS: No reward hacking signals found.",
-          vacuous_pass_21: "PASS: Pass criteria are meaningful.",
-          verifier_calibration_22: "PASS: Verifier is calibrated.",
-          instruction_style: "PASS: Writing style is clear.",
-          doc_drift: "FAIL: Documentation no longer matches the latest workflow.",
-          env_hygiene: "PASS: Environment setup is clean.",
-          housekeeping: "PASS: Cleanup rules are present.",
-        },
-      };
-
       const jsonInput = document.getElementById("json-input");
       const renderButton = document.getElementById("render-json");
       const fileInput = document.getElementById("json-file");
-      const loadSampleButton = document.getElementById("load-sample");
       const hidePassToggle = document.getElementById("hide-pass-toggle");
       const resultsContainer = document.getElementById("results");
       const summaryContainer = document.getElementById("summary");
@@ -443,6 +421,22 @@
         }
 
         return JSON.stringify(value, null, 2);
+      }
+
+      function escapeHtml(text) {
+        return text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function formatResultText(text) {
+        return escapeHtml(text).replaceAll(
+          "DISPUTE:",
+          '<span class="dispute-highlight">DISPUTE:</span>',
+        );
       }
 
       function classifyStatus(text) {
@@ -555,7 +549,9 @@
 
           name.textContent = item.field;
           badge.textContent = statusLabel;
-          text.textContent = item.missing ? "No value found for this metadata field." : item.text;
+          text.innerHTML = item.missing
+            ? "No value found for this metadata field."
+            : formatResultText(item.text);
 
           if (item.status === "fail" || item.status === "unknown" || item.missing) {
             body.hidden = false;
@@ -593,11 +589,6 @@
         if (jsonInput.value.trim()) {
           parseAndRender(jsonInput.value);
         }
-      });
-
-      loadSampleButton.addEventListener("click", () => {
-        jsonInput.value = JSON.stringify(SAMPLE_JSON, null, 2);
-        parseAndRender(jsonInput.value);
       });
 
       fileInput.addEventListener("change", async (event) => {
