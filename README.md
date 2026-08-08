@@ -4,6 +4,8 @@ A lightweight static web app for reviewing JSON files that contain a top-level `
 
 The viewer is designed for quick inspection of structured evaluation output. It focuses on a known set of metadata fields, highlights failures first, and keeps the interface simple enough to run anywhere as a static site.
 
+Use at https://outlierfred.github.io/terminal_bench_json_viewer/
+
 ## Features
 
 - Reads a top-level `metadata` object from pasted JSON or an uploaded file.
