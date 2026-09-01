@@ -454,10 +454,24 @@
           throw new Error("The JSON root must be an object.");
         }
 
-        const metadata = payload.metadata;
+        const isObj = (val) => val && typeof val === "object" && !Array.isArray(val);
+        const taskMetadata = payload.task && payload.task.metadata;
+        const topMetadata = payload.metadata;
 
-        if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
-          throw new Error('Expected a top-level "metadata" object.');
+        let metadata;
+
+        if (isObj(taskMetadata) && Object.keys(taskMetadata).length > 0) {
+          metadata = taskMetadata;
+        } else if (isObj(topMetadata) && Object.keys(topMetadata).length > 0) {
+          metadata = topMetadata;
+        } else if (isObj(taskMetadata)) {
+          metadata = taskMetadata;
+        } else if (isObj(topMetadata)) {
+          metadata = topMetadata;
+        }
+
+        if (!metadata) {
+          throw new Error('Expected a "metadata" object at payload.task.metadata or payload.metadata.');
         }
 
         return TARGET_FIELDS.map((field) => {
